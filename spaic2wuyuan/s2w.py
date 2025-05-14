@@ -1,23 +1,23 @@
 import spaic
 
-from wuyuan.snn_model.network import Network
-from wuyuan.snn_model.encoder import Encoder
-from wuyuan.snn_model.neuron_group import NeuronGroup
-from wuyuan.snn_model.connection_group import ConnectionGroup
-from wuyuan.snn_model.spike_decoder import SpikeDecoder
-from wuyuan.snn_model.state_decoder_neuron import StateDecoderNeuron
-from wuyuan.snn_model.spike_monitor import SpikeMonitor
-from wuyuan.snn_model.state_monitor_neuron import StateMonitorNeuron
-from wuyuan.snn_model.state_monitor_synapse import StateMonitorSynapse
+from snn_model.network import Network
+from snn_model.encoder import Encoder
+from snn_model.neuron_group import NeuronGroup
+from snn_model.connection_group import ConnectionGroup
+from snn_model.spike_decoder import SpikeDecoder
+from snn_model.state_decoder_neuron import StateDecoderNeuron
+from snn_model.spike_monitor import SpikeMonitor
+from snn_model.state_monitor_neuron import StateMonitorNeuron
+from snn_model.state_monitor_synapse import StateMonitorSynapse
 
-from wuyuan.snn_model.encoder_models.poisson import Poisson
-from wuyuan.snn_model.neuron_models.lif import LIF
-from wuyuan.snn_model.neuron_models.clif import CLIF
-from wuyuan.snn_model.topology_models.fully_connected import FullyConnected
-from wuyuan.snn_model.topology_models.one_to_one import OneToOne
-from wuyuan.snn_model.topology_models.convolution_2d import Convolution2D
-from wuyuan.snn_model.synapse_models.Delta import Delta
-from wuyuan.snn_model.decoder_models.spike_count import SpikeCount
+from snn_model.encoder_models.poisson import Poisson
+from snn_model.neuron_models.lif import LIF
+from snn_model.neuron_models.clif import CLIF
+from snn_model.topology_models.fully_connected import FullyConnected
+from snn_model.topology_models.one_to_one import OneToOne
+from snn_model.topology_models.convolution_2d import Convolution2D
+from snn_model.synapse_models.Delta import Delta
+from snn_model.decoder_models.spike_count import SpikeCount
 
 from .spaic_to_wuyuan_info import get_infos
 
