@@ -12,8 +12,8 @@ def traverse_spaic(net: spaic.Network) -> tuple[list, list, list, list]:
     # dfs
     stack = [net]
     while stack:
-        assem = stack.pop()
-        for a in assem._groups.values():
+        net = stack.pop()
+        for a in net._groups.values():
             if isinstance(a, spaic.Encoder):
                 encoders.append((a.id, a)) # 使用 id 避免名称重复
             elif isinstance(a, spaic.NeuronGroup):
@@ -22,7 +22,7 @@ def traverse_spaic(net: spaic.Network) -> tuple[list, list, list, list]:
                 decoders.append((a.id, a))
             elif a._groups:
                 stack.append(a)
-        for a in assem._connections.values():
+        for a in net._connections.values():
             connections.append((a.id, a))
 
     return encoders, neuron_groups, decoders, connections

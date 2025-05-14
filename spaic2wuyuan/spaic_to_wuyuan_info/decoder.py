@@ -14,11 +14,12 @@ def get_dec_info(a: spaic.Decoder, infos: dict) -> dict:
         raise TypeError('Decoder 目标只能是 NeuronGroup')
 
     # 默认信息
+    param = {
+        'sampling_period': float(a.dt),
+    }
     info = {
         'target': target_id,
-        'param': (param := {
-            'sampling_period': float(a.dt),
-        }),
+        'param': param,
         'model_type': 'unknown',
         'model_param': {
             'parameter': {},

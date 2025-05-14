@@ -11,9 +11,11 @@ vars: dict[str, dict[str, tuple[str, Callable]]] = {}
 class Meta(type):
     def __new__(cls, name, *args):
         a = type.__new__(cls, name, *args)
-        if (get_info := getattr(a, 'get_info', None)) is not None:
+        get_info = getattr(a, 'get_info', None)
+        if get_info is not None:
             exts[name] = get_info
-        if (var_dict := getattr(a, 'var_dict', None)) is not None:
+        var_dict = getattr(a, 'var_dict', None)
+        if var_dict is not None:
             vars[name] = var_dict
         return a
 
@@ -26,7 +28,11 @@ class Extracter(metaclass=Meta):
 def update_info(info: dict, name: str, *args):
     '''根据类名解析并更新信息'''
 
-    info1 = exts[name](*args)
+    get_info = exts.get(name)
+    if get_info is None:
+        raise ValueError(f'没有 {name} 模型')
+
+    info1 = get_info(*args)
 
     # dfs
     stack = [(info, info1)]

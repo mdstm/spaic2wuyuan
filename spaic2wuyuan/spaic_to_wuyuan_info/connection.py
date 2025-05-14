@@ -1,4 +1,5 @@
 import numpy as np
+from numpy import int16
 import spaic
 
 from .extracter import Extracter, update_info
@@ -6,10 +7,10 @@ from .extracter import Extracter, update_info
 
 def get_con_value(a: spaic.Connection, var: str) -> np.ndarray:
     '''从后端中提取连接变量值，并转换为 numpy 类型'''
-
-    value = a._backend.get_varialble(a.get_link_name(a.pre, a.post, var))
-
-    return value.numpy(force=True)
+    backend = a._backend
+    value = backend.get_varialble(a.get_link_name(a.pre, a.post, var))
+    value = backend.to_numpy(value)
+    return value
 
 
 def get_con_info(a: spaic.Connection, infos: dict) -> dict:
@@ -35,7 +36,7 @@ def get_con_info(a: spaic.Connection, infos: dict) -> dict:
         's_model_type': 'Delta', # spaic 没有突触模型，设为 Delta
         's_model_param': {
             'parameter': {'bit_width_weight': 16},
-            'initial_state': {'weight': np.int16(1)},
+            'initial_state': {'weight': int16(1)},
         },
     }
 
@@ -46,7 +47,7 @@ def get_con_info(a: spaic.Connection, infos: dict) -> dict:
 
 class FullConnection(Extracter):
     def reshape(arr: np.ndarray,
-            pre_shape: list[int], post_shape: list[int]) -> np.ndarray:
+                pre_shape: list[int], post_shape: list[int]) -> np.ndarray:
         '''spaic: (post_num, pre_num) -> wuyuan: pre_shape + post_shape'''
         return arr.T.reshape(pre_shape + post_shape)
 
@@ -55,7 +56,7 @@ class FullConnection(Extracter):
     }
 
     def get_info(a: spaic.Connection,
-            pre_shape: list[int], post_shape: list[int]) -> dict:
+                 pre_shape: list[int], post_shape: list[int]) -> dict:
         return {
             't_model_type': 'FullyConnected',
             'param': {
@@ -63,7 +64,7 @@ class FullConnection(Extracter):
                     # 从后端获取状态值并做转换
                     state_name: (
                         reshape(get_con_value(a, var), pre_shape, post_shape)
-                            .astype(np.int16),
+                            .astype(int16),
                         True, # 连接组的状态值都是常量
                     ) for var, (state_name, reshape) in
                         FullConnection.var_dict.items()
@@ -82,13 +83,13 @@ class one_to_one_mask(Extracter):
     }
 
     def get_info(a: spaic.Connection,
-            pre_shape: list[int], post_shape: list[int]) -> dict:
+                 pre_shape: list[int], post_shape: list[int]) -> dict:
         return {
             't_model_type': 'OneToOne',
             'param': {
                 'initial_synapse_state_value': {
                     state_name: (
-                        reshape(get_con_value(a, var)).astype(np.int16),
+                        reshape(get_con_value(a, var)).astype(int16),
                         True,
                     ) for var, (state_name, reshape) in
                         one_to_one_mask.var_dict.items()
@@ -99,7 +100,7 @@ class one_to_one_mask(Extracter):
 
 class conv_connect(Extracter):
     def reshape(arr: np.ndarray, *args) -> np.ndarray:
-        '''spaic 和 wuyuan 形状一样'''
+        '''spaic 和 wuyuan 权重形状一样，都是 (Cout, Cin, H, W)'''
         return arr
 
     var_dict = {
@@ -107,7 +108,7 @@ class conv_connect(Extracter):
     }
 
     def get_info(a: spaic.Connection,
-            pre_shape: list[int], post_shape: list[int]) -> dict:
+                 pre_shape: list[int], post_shape: list[int]) -> dict:
         return {
             't_model_type': 'Convolution2D',
             't_model_param': {
@@ -121,7 +122,7 @@ class conv_connect(Extracter):
             'param': {
                 'initial_synapse_state_value': {
                     state_name: (
-                        reshape(get_con_value(a, var)).astype(np.int16),
+                        reshape(get_con_value(a, var)).astype(int16),
                         True,
                     ) for var, (state_name, reshape) in
                         conv_connect.var_dict.items()
